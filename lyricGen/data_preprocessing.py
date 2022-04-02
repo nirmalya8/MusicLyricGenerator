@@ -59,6 +59,50 @@ def get_album_titles(albums):
     print("========Obtained Titles========")
     return titles
 
+def get_choruses(data,albums):
+    chorus_data=data[(data.album.isin(albums)) & (data.lyric=='[Chorus]')].drop_duplicates(subset='song_title').index.tolist()
+    lyrics = data.lyric.tolist()
+    stop=[]
+    for l in lyrics:
+        if l[0]=='[':
+            stop.append(1)
+        else:
+            stop.append(0)
+    data['S']=stop
+    chorus = []
+    for i in chorus_data:
+    #Pick the chorus till the following line
+        new_d=data[i+1::]
+        ss=new_d.S.tolist()
+        for q in range(len(ss)):
+            if ss[q]==1:
+                break
+        new_d=data[i+1:i+1+q]
+        chorus.append(new_d.lyric.tolist())
+
+    return chorus
+
+def return_index(chorus,lyrics):
+    return chorus.index([lyrics])
+
+def get_chorus_text(chorus):
+    text=''
+    for c in range(len(chorus)):
+        for i in range(len(chorus[c])):
+            if c%10==0:
+                print(".",sep=" ")
+            text= text+ chorus[c][i]+ ' \n '
+    print(len(text))
+    print(text[35000:])
+    return text
+
+def write_into_file(text):
+    datadir_path = os.path.join(os.path.dirname(__file__),"Data")
+    file_path = os.path.join(datadir_path,"chorus.txt")
+    f = open(file_path, "w",encoding="utf-8")
+    f.write(text)
+    f.close()
+
 if __name__ == '__main__':
     data = get_data()
     unique_albums = get_unique_albums(data)
@@ -69,3 +113,11 @@ if __name__ == '__main__':
     albums = get_new_album_list(indices,unique_albums)
 
     titles = get_album_titles(albums)
+
+    chorus = get_choruses(data,albums)
+    lyrics = "I didn't bring her up so they could cut her down\t8\tNone\n197\tUnreleased Songs\tBrought Up That Way \tI didn't bring her here so they could shut her out\t9\tNone\n197\tUnreleased Songs\tBrought Up That Way \tI live my whole damn life to see that little girl's smile\t10\tNone\n197\tUnreleased Songs\tBrought Up That Way \tSo why are tears pouring down that sweet face?\t11\tNone\n197\tUnreleased Songs\tBrought Up That Way \tShe wasn't brought up that way"
+
+    print(return_index(chorus,lyrics))
+    text = get_chorus_text(chorus)
+    
+    write_into_file(text)
