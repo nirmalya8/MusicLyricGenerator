@@ -63,4 +63,4 @@ def get_preprocessed_data():
     
     x_idx = np.array([get_seq_idx(word_to_idx ,word) for word in x_word])
     y_idx = np.array([get_seq_idx(word_to_idx, word) for word in y_word])
-    return x_idx, y_idx, vocab_size, word_to_idx
+    return x_idx, y_idx, vocab_size, word_to_idx, idx_to_word
