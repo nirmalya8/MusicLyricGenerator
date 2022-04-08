@@ -13,7 +13,7 @@ lr = 0.001
 num_epochs = 50
 batch_size = 32
 
-x_idx,y_idx, vocab_size,_,_ = get_preprocessed_data()
+x_idx,y_idx, vocab_size,_,_,_ = get_preprocessed_data()
 model = RapLyricGen(num_hidden, num_layers, embed_size, drop_prob, lr,vocab_size)
 optimizer = torch.optim.Adam(model.parameters(), lr = lr)
 loss_func = nn.CrossEntropyLoss()

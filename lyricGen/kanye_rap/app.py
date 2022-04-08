@@ -4,6 +4,7 @@ import torch.nn.functional as Functional
 import numpy as np
 from preprocessing import get_preprocessed_data
 from model import RapLyricGen
+import random
 
 def predict(model, tkn, hidden_layer):
          
@@ -42,8 +43,14 @@ def generate(start_text, num_words=60):
     tokens = start_text.split()
     
     # iterate through and predict the next token
-    for token in start_text.split():
-        curr_token, hidden = predict(model, token, hidden)
+    try:
+        for token in start_text.split():
+            curr_token, hidden = predict(model, token, hidden)
+    except KeyError:
+        print(','.join(uniq_words))
+        start = random.randint(0, len(uniq_words))
+        stop = len(uniq_words) if start+10 >= len(uniq_words) else start + 10
+        return f"Word not in vocabulary, try one of: {','.join(uniq_words[start:stop])} "
     
     # add the token
     tokens.append(curr_token)
@@ -56,7 +63,7 @@ def generate(start_text, num_words=60):
     # return the formatted string
     return " ".join(tokens)
 
-_,_,vocab_size,word_to_idx,idx_to_word = get_preprocessed_data()
+_,_,vocab_size,word_to_idx,idx_to_word, uniq_words= get_preprocessed_data()
 num_hidden = 256
 num_layers = 4
 embed_size = 200
@@ -69,13 +76,22 @@ model.load_state_dict(torch.load("rap_gen_3.pt"))
 
 #print(generate(model,"chicago"))
 
-textbox = gr.inputs.Textbox(lines=1, placeholder="Let's generate lyrics", default="", label="Enter a word")#, optional=True)
+start = random.randint(0, len(uniq_words))
+stop = len(uniq_words) if start+5 >= len(uniq_words) else start + 5
+random.shuffle(uniq_words)
+#unique_words = ", ".join(unique_words)
+#print(unique_words)
+textbox = gr.inputs.Textbox(lines=1, placeholder=f"Let's generate lyrics, enter a word or try one of the words below", default="", label="Enter a word")#, optional=True)
 #checkbox = gr.inputs.CheckboxGroup(listofwords,label='Or, choose either of these',type="value")#, optional=False)
 
 
 # print(checkbox)
 gui = gr.Interface(fn=generate, #callable function
                    inputs=textbox, # or checkbox, #input format
-                   outputs="text")
+                   outputs="text",theme="dark-grass",
+                   title="Rap Lyrics Generator",
+                   description="This lyrics generator is based on Kanye West's songs. P.S. You might get some slangs here and there. Enjoy!",
+                   examples = list(uniq_words[start:stop]) #[["hate you"],["add"],["rhymes"]]
+                   )
 
-gui.launch(debug=True)
+gui.launch(share=True)
