@@ -17,7 +17,7 @@ The `rap_lyric` folder has the source code for generating rap lyrics, taking ins
 The names of the files are given on the basis of what task they are used for. For example, `data_preprocessing.py` is used for data processing. Similarly, `model.py` is used to create the model, which is trained using `train.py`. 
 
 ## Some output images
-![](images\img1.jpg)
-![](images\img2.jpg)
-![](images\img3.jpg)
-![](images\img4.jpg)
+![](images/img1.jpg)
+![](images/img2.jpg)
+![](images/img3.jpg)
+![](images/img4.jpg)
