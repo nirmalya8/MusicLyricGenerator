@@ -94,4 +94,4 @@ gui = gr.Interface(fn=generate, #callable function
                    examples = list(uniq_words[start:stop]) #[["hate you"],["add"],["rhymes"]]
                    )
 
-gui.launch(share=True)
+gui.launch()
